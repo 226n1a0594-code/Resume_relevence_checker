@@ -9,8 +9,14 @@ class JDParser:
         try:
             self.nlp = spacy.load("en_core_web_sm")
         except OSError:
-            st.warning("⚠️ spaCy model not found. Using enhanced basic parsing.")
-            self.nlp = None
+            try:
+                self.nlp = spacy.load("en_core_web_md")
+            except OSError:
+                try:
+                    self.nlp = spacy.load("en_core_web_lg")
+                except OSError:
+                    # Silent fallback - no warning message
+                    self.nlp = None
     
     def _load_comprehensive_skills_database(self) -> Dict[str, List[str]]:
         """Load comprehensive skills database matching resume parser"""
@@ -640,6 +646,8 @@ class JDParser:
                 salary_info['unit'] = unit
                 break
         
+        return salary_info
+    
     def _extract_location_details(self, text: str) -> Dict:
         """Extract location and work arrangement details"""
         location_info = {}
