@@ -12,8 +12,14 @@ class ResumeParser:
         try:
             self.nlp = spacy.load("en_core_web_sm")
         except OSError:
-            st.warning("⚠️ spaCy model not found. Using basic parsing mode.")
-            self.nlp = None
+            try:
+                self.nlp = spacy.load("en_core_web_md")
+            except OSError:
+                try:
+                    self.nlp = spacy.load("en_core_web_lg")
+                except OSError:
+                    # Silent fallback - no warning message
+                    self.nlp = None
     
     def _load_comprehensive_skills_database(self) -> Dict[str, List[str]]:
         """Load comprehensive skills database with latest technologies"""
@@ -901,4 +907,3 @@ class ResumeParser:
             score += min(5, len(certifications))
         
         return min(100, score)
-                
