@@ -907,3 +907,4 @@ class ResumeParser:
             score += min(5, len(certifications))
         
         return min(100, score)
+

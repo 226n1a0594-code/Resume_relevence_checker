@@ -293,24 +293,24 @@ def show_hr_interface():
     st.sidebar.markdown("---")
     
     # Individual navigation buttons
-    if st.sidebar.button("📊 Dashboard", use_container_width=True):
+    if st.sidebar.button("📊 Dashboard", width="stretch"):
         st.session_state.page = "Dashboard"
         st.rerun()
     
-    if st.sidebar.button("📝 Upload Job Description", use_container_width=True):
+    if st.sidebar.button("📝 Upload Job Description",  width="stretch"):
         st.session_state.page = "Upload Job Description"
         st.rerun()
     
-    if st.sidebar.button("📈 View Results", use_container_width=True):
+    if st.sidebar.button("📈 View Results",  width="stretch"):
         st.session_state.page = "View Results"
         st.rerun()
     
-    if st.sidebar.button("📊 Analytics", use_container_width=True):
+    if st.sidebar.button("📊 Analytics",  width="stretch"):
         st.session_state.page = "Analytics"
         st.rerun()
     
     st.sidebar.markdown("---")
-    if st.sidebar.button("🔄 Switch User Type", use_container_width=True):
+    if st.sidebar.button("🔄 Switch User Type",  width="stretch"):
         st.session_state.user_type = None
         st.session_state.page = None
         st.rerun()
@@ -389,16 +389,17 @@ def show_hr_dashboard():
     # Recent activity
     st.markdown("### 📈 Recent Applications")
     recent_evaluations = db_manager.get_recent_evaluations(limit=10)
-    
     if recent_evaluations:
-        df = pd.DataFrame(recent_evaluations, columns=[
-            'ID', 'Job Title', 'Candidate', 'Score', 'Verdict', 'Date'
-        ])
+        df = pd.DataFrame([row[:8] for row in recent_evaluations], columns=[
+        'ID', 'Job Title', 'Candidate', 'Email', 'Score', 'Verdict', 'Date', 'Location'
+    ])
+
+
         
         # Create interactive table
         st.dataframe(
             df,
-            use_container_width=True,
+            width="stretch",
             hide_index=True,
             column_config={
                 "Score": st.column_config.ProgressColumn(
@@ -454,7 +455,7 @@ def upload_job_description():
             help="Upload the complete job description document"
         )
         
-        submitted = st.form_submit_button("🚀 Process & Save Job Description", use_container_width=True)
+        submitted = st.form_submit_button("🚀 Process & Save Job Description",width="stretch")
         
         if submitted:
             if not all([job_title, company_name, location, experience_level, job_type, uploaded_file]):
@@ -567,7 +568,7 @@ def upload_resume():
             help="Supported formats: PDF, DOCX (Max size: 5MB)"
         )
         
-        submitted = st.form_submit_button("🚀 Analyze My Resume", use_container_width=True)
+        submitted = st.form_submit_button("🚀 Analyze My Resume",width="stretch")
         
         if submitted:
             if not all([candidate_name, candidate_email, selected_job, uploaded_resume]):
@@ -721,9 +722,10 @@ def view_results():
     evaluations = db_manager.get_evaluations_filtered(job_filter, verdict_filter, min_score)
     
     if evaluations:
-        df = pd.DataFrame(evaluations, columns=[
-            'ID', 'Job Title', 'Candidate', 'Email', 'Score', 'Verdict', 'Date', 'Location'
+        df = pd.DataFrame([row[:8] for row in evaluations], columns=[
+        'ID', 'Job Title', 'Candidate', 'Email', 'Score', 'Verdict', 'Date', 'Location'
         ])
+
         
         # Sort data
         if sort_by == "Score (High to Low)":
@@ -738,7 +740,7 @@ def view_results():
         
         st.dataframe(
             df,
-            use_container_width=True,
+            width="stretch",
             hide_index=True,
             column_config={
                 "Score": st.column_config.ProgressColumn(
@@ -765,7 +767,7 @@ def view_results():
             data=csv,
             file_name=f"candidate_evaluations_{datetime.now().strftime('%Y%m%d_%H%M')}.csv",
             mime="text/csv",
-            use_container_width=True
+            width="stretch"
         )
         
         # Detailed view
@@ -812,7 +814,7 @@ def show_analytics():
             plot_bgcolor='rgba(0,0,0,0)',
             paper_bgcolor='rgba(0,0,0,0)'
         )
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig,width="stretch")
     
     with col2:
         st.markdown("### ⭐ Verdict Distribution")
@@ -827,7 +829,7 @@ def show_analytics():
             color_discrete_sequence=colors
         )
         fig.update_layout(plot_bgcolor='rgba(0,0,0,0)', paper_bgcolor='rgba(0,0,0,0)')
-        st.plotly_chart(fig, use_container_width=True)
+        st.plotly_chart(fig,width="stretch")
     
     # Job-wise analytics
     st.markdown("### 🎯 Job-wise Performance Analysis")
